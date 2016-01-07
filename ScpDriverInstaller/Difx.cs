@@ -91,13 +91,13 @@ namespace ScpDriverInstaller
 
 	public class Difx_32 : Difx
 	{
-		[DllImport(@".\DIFxApi\x86\DIFxAPI.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
+		[DllImport(@".\DIFxApi\DIFxAPI_x86.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
 		private static extern UInt32 DriverPackagePreinstall(
 				[MarshalAs(UnmanagedType.LPTStr)] String DriverPackageInfPath,
 				[MarshalAs(UnmanagedType.U4)] UInt32 Flags
 			);
 
-		[DllImport(@".\DIFxApi\x86\DIFxAPI.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
+		[DllImport(@".\DIFxApi\DIFxAPI_x86.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
 		private static extern UInt32 DriverPackageInstall(
 				[MarshalAs(UnmanagedType.LPTStr)] String DriverPackageInfPath,
 				[MarshalAs(UnmanagedType.U4)] UInt32 Flags,
@@ -105,7 +105,7 @@ namespace ScpDriverInstaller
 				[MarshalAs(UnmanagedType.Bool)] out Boolean pNeedReboot
 			);
 
-		[DllImport(@".\DIFxApi\x86\DIFxAPI.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
+		[DllImport(@".\DIFxApi\DIFxAPI_x86.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
 		private static extern UInt32 DriverPackageUninstall(
 				[MarshalAs(UnmanagedType.LPTStr)] String DriverPackageInfPath,
 				[MarshalAs(UnmanagedType.U4)] UInt32 Flags,
@@ -113,7 +113,7 @@ namespace ScpDriverInstaller
 				[MarshalAs(UnmanagedType.Bool)] out Boolean pNeedReboot
 			);
 
-		[DllImport(@".\DIFxApi\x86\DIFxAPI.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		[DllImport(@".\DIFxApi\DIFxAPI_x86.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern void SetDifxLogCallback(DIFLOGCALLBACK LogCallback, IntPtr CallbackContext);
 
 		public Difx_32()
@@ -139,13 +139,13 @@ namespace ScpDriverInstaller
 
 	public class Difx_64 : Difx
 	{
-		[DllImport(@".\DIFxApi\amd64\DIFxAPI.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
+		[DllImport(@".\DIFxApi\DIFxAPI_x64.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
 		private static extern UInt32 DriverPackagePreinstall(
 				[MarshalAs(UnmanagedType.LPTStr)] String DriverPackageInfPath,
 				[MarshalAs(UnmanagedType.U4)] UInt32 Flags
 			);
 
-		[DllImport(@".\DIFxApi\amd64\DIFxAPI.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
+		[DllImport(@".\DIFxApi\DIFxAPI_x64.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
 		private static extern UInt32 DriverPackageInstall(
 				[MarshalAs(UnmanagedType.LPTStr)] String DriverPackageInfPath,
 				[MarshalAs(UnmanagedType.U4)] UInt32 Flags,
@@ -153,7 +153,7 @@ namespace ScpDriverInstaller
 				[MarshalAs(UnmanagedType.Bool)] out Boolean pNeedReboot
 			);
 
-		[DllImport(@".\DIFxApi\amd64\DIFxAPI.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
+		[DllImport(@".\DIFxApi\DIFxAPI_x64.dll", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
 		private static extern UInt32 DriverPackageUninstall(
 				[MarshalAs(UnmanagedType.LPTStr)] String DriverPackageInfPath,
 				[MarshalAs(UnmanagedType.U4)] UInt32 Flags,
@@ -161,7 +161,7 @@ namespace ScpDriverInstaller
 				[MarshalAs(UnmanagedType.Bool)] out Boolean pNeedReboot
 			);
 
-		[DllImport(@".\DIFxApi\amd64\DIFxAPI.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		[DllImport(@".\DIFxApi\DIFxAPI_x64.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern void SetDifxLogCallback(DIFLOGCALLBACK LogCallback, IntPtr CallbackContext);
 
 

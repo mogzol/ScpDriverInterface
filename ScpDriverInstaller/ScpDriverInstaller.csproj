@@ -98,10 +98,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DIFxAPI\amd64\DIFxAPI.dll">
+    <Content Include="DIFxAPI\DIFxAPI_x64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DIFxAPI\x86\DIFxAPI.dll">
+    <Content Include="DIFxAPI\DIFxAPI_x86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Driver\ScpVBus.inf">

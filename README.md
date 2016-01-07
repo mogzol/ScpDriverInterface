@@ -1,1 +1,3 @@
-# ScpDriverInterface - Emulated XBox 360 Controllers via Scartlet.Crush's SCP Virtual Bus Driver
+# ScpDriverInterface
+
+ScpDriverInterface uses Scarlet.Crush's SCP Virtual Bus Driver to emulate XBox 360 controllers.
