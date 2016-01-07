@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScpDriverInterface", "ScpDriverInterface\ScpDriverInterface.csproj", "{4BC2A4D1-CE08-4A6D-B7ED-C3326EC21F69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScpTester", "Tester\ScpTester.csproj", "{4A49E8E2-4C1B-4DBE-8EDE-2325DFD8FAF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScpDriverInstaller", "ScpDriverInstaller\ScpDriverInstaller.csproj", "{2B5ED6DC-AB58-4C7A-A524-3F9B44E39344}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D60C9E10-422E-4504-8990-574839BF5F07}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.TXT = LICENSE.TXT
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4BC2A4D1-CE08-4A6D-B7ED-C3326EC21F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BC2A4D1-CE08-4A6D-B7ED-C3326EC21F69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BC2A4D1-CE08-4A6D-B7ED-C3326EC21F69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BC2A4D1-CE08-4A6D-B7ED-C3326EC21F69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A49E8E2-4C1B-4DBE-8EDE-2325DFD8FAF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A49E8E2-4C1B-4DBE-8EDE-2325DFD8FAF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A49E8E2-4C1B-4DBE-8EDE-2325DFD8FAF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A49E8E2-4C1B-4DBE-8EDE-2325DFD8FAF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B5ED6DC-AB58-4C7A-A524-3F9B44E39344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B5ED6DC-AB58-4C7A-A524-3F9B44E39344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B5ED6DC-AB58-4C7A-A524-3F9B44E39344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B5ED6DC-AB58-4C7A-A524-3F9B44E39344}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
