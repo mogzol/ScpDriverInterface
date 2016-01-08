@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Tester")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ScpTester")]
+[assembly: AssemblyDescription("Tester for ScpDriverInterface.dll")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Tester")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCompany("Mogzol")]
+[assembly: AssemblyProduct("ScpTester")]
+[assembly: AssemblyCopyright("Copyright © Mogzol 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

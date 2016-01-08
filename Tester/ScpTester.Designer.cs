@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Tester
+namespace ScpTester
 {
 	partial class ScpTester
 	{

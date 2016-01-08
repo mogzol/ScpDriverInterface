@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Tester
+namespace ScpTester
 {
 	static class Program
 	{

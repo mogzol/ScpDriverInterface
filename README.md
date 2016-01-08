@@ -78,7 +78,7 @@ And if you wanted to set a button to be **not** pressed, regardless of its initi
 controller.Buttons &= ~X360Buttons.A;
 ```
 
-Once you are done setting up the state of the controller, you can use the `GetReport()` method to get the 20-byte input report that can be used with ScpBus's `Report()` method. For example, if you had set up `controller` to be the state you wanted controller 2 to be in, then you would use this to send that state to the virtual controller:
+Once you are done setting up the state of the controller, you can use the `GetReport()` method to get the 20-byte input report that can be used with ScpBus's `Report()` method. For example, if you had set up `controller` to be the state you wanted controller 2 to be in, then you would use this code to send that state to the virtual controller:
 
 ```C#
 scpBus.Report(2, controller.GetReport());

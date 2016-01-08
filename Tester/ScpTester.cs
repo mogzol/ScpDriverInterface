@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using ScpDriverInterface;
 
-namespace Tester
+namespace ScpTester
 {
 	public partial class ScpTester : Form
 	{

@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ScpController")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ScpDriverInterface")]
+[assembly: AssemblyDescription("Interface for Scarlet.Crush's SCP Virtual Bus Driver")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ScpController")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCompany("Mogzol")]
+[assembly: AssemblyProduct("ScpDriverInterface")]
+[assembly: AssemblyCopyright("Copyright © Mogzol 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
