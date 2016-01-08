@@ -67,6 +67,8 @@ namespace Tester
 			this.rightTrigger = new System.Windows.Forms.TrackBar();
 			this.leftTrigger_lbl = new System.Windows.Forms.Label();
 			this.leftTrigger = new System.Windows.Forms.TrackBar();
+			this.rumbleInfo = new System.Windows.Forms.ToolStripSplitButton();
+			this.separator = new System.Windows.Forms.ToolStripStatusLabel();
 			((System.ComponentModel.ISupportInitialize)(this.controllerNum)).BeginInit();
 			this.statusStrip1.SuspendLayout();
 			this.buttonGroup.SuspendLayout();
@@ -143,6 +145,8 @@ namespace Tester
             this.status_lbl,
             this.status,
             this.spacer,
+            this.rumbleInfo,
+            this.separator,
             this.resetInputs});
 			this.statusStrip1.Location = new System.Drawing.Point(0, 251);
 			this.statusStrip1.Name = "statusStrip1";
@@ -167,7 +171,7 @@ namespace Tester
 			// spacer
 			// 
 			this.spacer.Name = "spacer";
-			this.spacer.Size = new System.Drawing.Size(230, 17);
+			this.spacer.Size = new System.Drawing.Size(91, 17);
 			this.spacer.Spring = true;
 			// 
 			// resetInputs
@@ -483,6 +487,25 @@ namespace Tester
 			this.leftTrigger.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
 			this.leftTrigger.ValueChanged += new System.EventHandler(this.leftTrigger_ValueChanged);
 			// 
+			// rumbleInfo
+			// 
+			this.rumbleInfo.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.rumbleInfo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.rumbleInfo.DropDownButtonWidth = 0;
+			this.rumbleInfo.ForeColor = System.Drawing.Color.DarkOliveGreen;
+			this.rumbleInfo.Image = ((System.Drawing.Image)(resources.GetObject("rumbleInfo.Image")));
+			this.rumbleInfo.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.rumbleInfo.Name = "rumbleInfo";
+			this.rumbleInfo.Size = new System.Drawing.Size(98, 20);
+			this.rumbleInfo.Text = "Get Rumble Info";
+			this.rumbleInfo.ButtonClick += new System.EventHandler(this.rumbleInfo_ButtonClick);
+			// 
+			// separator
+			// 
+			this.separator.Name = "separator";
+			this.separator.Size = new System.Drawing.Size(10, 17);
+			this.separator.Text = "|";
+			// 
 			// ScpTester
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -497,6 +520,7 @@ namespace Tester
 			this.Controls.Add(this.controllerNum);
 			this.Controls.Add(this.controllerNum_lbl);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.MaximizeBox = false;
 			this.Name = "ScpTester";
 			this.Text = "SCP Emulated X360 Controller Tester";
 			((System.ComponentModel.ISupportInitialize)(this.controllerNum)).EndInit();
@@ -553,6 +577,8 @@ namespace Tester
 		private TrackBar leftTrigger;
 		private ToolStripSplitButton resetInputs;
 		private ToolStripStatusLabel spacer;
+		private ToolStripSplitButton rumbleInfo;
+		private ToolStripStatusLabel separator;
 	}
 }
 

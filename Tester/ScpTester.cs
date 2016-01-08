@@ -12,6 +12,10 @@ namespace Tester
 
 		private bool _numberChangeCheck = true;
 		private bool _resetting = false;
+		private byte[] _outputReport = new byte[8];
+		private bool _rumbleValid = false;
+		private byte _bigRumble = 0;
+		private byte _smallRumble = 0;
 
 		public ScpTester()
 		{
@@ -40,7 +44,7 @@ namespace Tester
 		{
 			if (_numberChangeCheck && (_controller.Buttons != X360Buttons.None || _controller.LeftTrigger != 0 || _controller.RightTrigger != 0 || _controller.LeftStickX != 0 || _controller.LeftStickY != 0 || _controller.RightStickX != 0 || _controller.RightStickY != 0))
 			{
-				DialogResult result = MessageBox.Show("Changing controllers will reset the current _controller to the default state. Continue?\n\nNote: This isn't a limitation of the driver, I just didn't want to deal with multiple _controller inputs when programming this tester.", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+				DialogResult result = MessageBox.Show("Changing controllers will reset the current controller to the default state. Continue?\n\nNote: This isn't a limitation of the driver, I just didn't want to deal with multiple controller inputs when programming this tester.", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 				if (result == DialogResult.No)
 				{
 					_numberChangeCheck = false;
@@ -51,13 +55,14 @@ namespace Tester
 
 				if (!ResetControllerInputs((int)(decimal)controllerNum.Tag))
 				{
-					MessageBox.Show("Unable to reset _controller inputs, can't switch controllers.", "Uh-oh", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show("Unable to reset controller inputs, can't switch controllers.", "Uh-oh", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					_numberChangeCheck = false;
 					controllerNum.Value = (decimal)controllerNum.Tag;
 					_numberChangeCheck = true;
 					return;
 				}
 
+				_rumbleValid = false;
 				ResetControls();
 			}
 
@@ -111,7 +116,8 @@ namespace Tester
 
 		private bool HandleButton(Button button)
 		{
-			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport());
+			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport(), _outputReport);
+			CheckRumble();
 			status.Text = result.ToString();
 
 			if (!result)
@@ -123,6 +129,16 @@ namespace Tester
 				button.BackColor = Color.Transparent;
 
 			return true;
+		}
+
+		private void CheckRumble()
+		{
+			if (_outputReport[1] == 0x08)
+			{
+				_bigRumble = _outputReport[3];
+				_smallRumble = _outputReport[4];
+				_rumbleValid = true;
+			}
 		}
 
 		private void btnA_Click(object sender, EventArgs e)
@@ -237,7 +253,8 @@ namespace Tester
 
 			_controller.LeftTrigger = (byte)leftTrigger.Value;
 
-			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport());
+			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport(), _outputReport);
+			CheckRumble();
 			status.Text = result.ToString();
 
 			if (!result)
@@ -257,7 +274,8 @@ namespace Tester
 
 			_controller.RightTrigger = (byte)rightTrigger.Value;
 
-			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport());
+			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport(), _outputReport);
+			CheckRumble();
 			status.Text = result.ToString();
 
 			if (!result)
@@ -277,7 +295,8 @@ namespace Tester
 
 			_controller.LeftStickY = (short)leftStickY.Value;
 
-			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport());
+			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport(), _outputReport);
+			CheckRumble();
 			status.Text = result.ToString();
 
 			if (!result)
@@ -297,7 +316,8 @@ namespace Tester
 
 			_controller.LeftStickX = (short)leftStickX.Value;
 
-			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport());
+			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport(), _outputReport);
+			CheckRumble();
 			status.Text = result.ToString();
 
 			if (!result)
@@ -317,7 +337,8 @@ namespace Tester
 
 			_controller.RightStickY = (short)rightStickY.Value;
 
-			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport());
+			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport(), _outputReport);
+			CheckRumble();
 			status.Text = result.ToString();
 
 			if (!result)
@@ -337,7 +358,8 @@ namespace Tester
 
 			_controller.RightStickX = (short)rightStickX.Value;
 
-			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport());
+			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport(), _outputReport);
+			CheckRumble();
 			status.Text = result.ToString();
 
 			if (!result)
@@ -359,12 +381,29 @@ namespace Tester
 				ResetControls();
 		}
 
+		private void rumbleInfo_ButtonClick(object sender, EventArgs e)
+		{
+			bool result = _scpBus.Report((int)controllerNum.Value, _controller.GetReport(), _outputReport);
+			CheckRumble();
+			status.Text = result.ToString();
+
+			if (result && _rumbleValid)
+			{
+				MessageBox.Show("Big Motor: " + _bigRumble + "\nSmall Motor: " + _smallRumble, "Rumble Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+			else if (result)
+			{
+				MessageBox.Show("Controller has not yet received any rumble data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
 		private bool ResetControllerInputs(int controllerNumber)
 		{
 			X360Controller temp = new X360Controller(_controller);
 			_controller = new X360Controller();
 
-			bool result = _scpBus.Report(controllerNumber, _controller.GetReport());
+			bool result = _scpBus.Report(controllerNumber, _controller.GetReport(), _outputReport);
+			CheckRumble();
 
 			if (!result)
 				_controller = temp;

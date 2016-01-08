@@ -51,7 +51,7 @@ namespace ScpDriverInterface
 			}
 			else
 			{
-				throw new IOException("SCP Virtual Bus Driver not found");
+				throw new IOException("SCP Virtual Bus Device not found");
 			}
 		}
 
@@ -164,7 +164,7 @@ namespace ScpDriverInterface
 		}
 
 		/// <summary>
-		/// Sends an input report of the current state of the specified emulated XBox 360 controller.
+		/// Sends an input report for the current state of the specified emulated XBox 360 controller. Note: Only use this if you don't care about rumble data, otherwise use the 3-parameter version of Report().
 		/// </summary>
 		/// <param name="controllerNumber">The controller to report.</param>
 		/// <param name="controllerReport">The controller report. If using the included X360Controller class, this can be generated with the GetReport() method. Otherwise see http://free60.org/wiki/GamePad#Input_report for details.</param>
@@ -175,7 +175,7 @@ namespace ScpDriverInterface
 		}
 
 		/// <summary>
-		/// Sends an input report of the current state of the specified emulated XBox 360 controller.
+		/// Sends an input report for the current state of the specified emulated XBox 360 controller. If you care about rumble data, make sure you check the output report for rumble data every time you call this.
 		/// </summary>
 		/// <param name="controllerNumber">The controller to report.</param>
 		/// <param name="controllerReport">The controller report. If using the included X360Controller class, this can be generated with the GetReport() method. Otherwise see http://free60.org/wiki/GamePad#Input_report for details.</param>
@@ -258,7 +258,7 @@ namespace ScpDriverInterface
 
 			if (handle == null || handle.IsInvalid)
 			{
-				throw new IOException("Unable to get SCP Virtual Bus Driver handle");
+				throw new IOException("Unable to get SCP Virtual Bus Device handle");
 			}
 
 			return handle;

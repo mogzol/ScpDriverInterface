@@ -95,6 +95,7 @@ namespace ScpDriverInstaller
 			this.Controls.Add(this.install);
 			this.Controls.Add(this.credits);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.MaximizeBox = false;
 			this.Name = "DriverInstaller";
 			this.Text = "SCP Driver Installer";
 			this.ResumeLayout(false);
