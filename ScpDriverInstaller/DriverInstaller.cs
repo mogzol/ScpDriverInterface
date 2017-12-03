@@ -18,10 +18,14 @@ using System.Windows.Forms;
 
 namespace ScpDriverInstaller
 {
+	public class ScpDriverInstallException : Exception
+	{
+		public ScpDriverInstallException(string message) : base(message) { }
+	}
+
 	public partial class DriverInstaller : Form
 	{
 		private const string SCP_BUS_CLASS_GUID = "{F679F562-3164-42CE-A4DB-E7DDBE723909}";
-		private Difx installer = Difx.Factory();
 
 		public DriverInstaller()
 		{
@@ -33,17 +37,15 @@ namespace ScpDriverInstaller
 			Process.Start("http://forums.pcsx2.net/User-Scarlet-Crush");
 		}
 
-		private void install_Click(object sender, EventArgs e)
+		/// <summary>Install the ScpVBus driver.</summary>
+		/// <remarks>Throws exceptions upon errors.</remarks>
+		/// <returns>false if a reboot is still required to complete installation, else true to indicate completion.</returns>
+		public static bool Install()
 		{
-			Color oldColor = install.ForeColor;
-			string oldText = install.Text;
-			install.ForeColor = Color.LightGray;
-			install.Text = "Installing...";
-			Update();
-
-			string infPath = @".\Driver\";
-			string devPath = "";
-			string instanceId = "";
+			var infPath = @".\Driver\";
+			var devPath = "";
+			var instanceId = "";
+			var installer = Difx.Factory();
 
 			uint result = 0;
 			bool rebootRequired = false;
@@ -54,24 +56,37 @@ namespace ScpDriverInstaller
 			{
 				if (!Devcon.Create("System", new Guid("{4D36E97D-E325-11CE-BFC1-08002BE10318}"), "root\\ScpVBus\0\0"))
 				{
-					MessageBox.Show("Unable to create SCP Virtual Bus, cannot continue with installation.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					install.Text = oldText;
-					install.ForeColor = oldColor;
-					return;
+					throw new ScpDriverInstallException("Unable to create SCP Virtual Bus. Cannot continue with installation.");
 				}
 			}
 
 			result = installer.Install(infPath + @"ScpVBus.inf", flags, out rebootRequired);
-			if (result == 0)
+			if (result != 0)
 			{
-				if (rebootRequired)
-					MessageBox.Show("Driver successfully installed, but a reboot may be required for it to work properly.", "Installation Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				else
-					MessageBox.Show("Driver successfully installed!", "Installation Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				throw new ScpDriverInstallException("Driver installation failed with DIFxAPI error 0x" + result.ToString("X8"));
 			}
-			else
+			return !rebootRequired;
+		}
+
+		private void install_Click(object sender, EventArgs e)
+		{
+			Color oldColor = install.ForeColor;
+			string oldText = install.Text;
+			install.ForeColor = Color.LightGray;
+			install.Text = "Installing...";
+			Update();
+
+			try
 			{
-				MessageBox.Show("Driver installation failed with DIFxAPI error 0x" + result.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				var fullyCompleted = Install();
+				var msg = "Driver successfully installed" + (fullyCompleted ? "!" : ", but a reboot may be required for it to work properly.");
+				MessageBox.Show(msg, "Installation Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				install.Text = oldText;
+				install.ForeColor = oldColor;
 			}
 
 			install.Text = oldText;
@@ -92,6 +107,7 @@ namespace ScpDriverInstaller
 
 			uint result = 0;
 			bool rebootRequired = false;
+			var installer = Difx.Factory();
 
 			if (Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
 			{
