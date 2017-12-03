@@ -51,9 +51,7 @@
   <ItemGroup>
     <Compile Include="Devcon.cs" />
     <Compile Include="Difx.cs" />
-    <Compile Include="DriverInstaller.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="DriverInstaller.cs" />
     <Compile Include="DriverInstaller.Designer.cs">
       <DependentUpon>DriverInstaller.cs</DependentUpon>
     </Compile>
@@ -75,15 +73,10 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Driver\amd64\ScpVBus.sys">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Driver\ScpVBus.cat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Driver\x86\ScpVBus.sys">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="Driver\amd64\ScpVBus.sys" />
+    <EmbeddedResource Include="Driver\x86\ScpVBus.sys" />
+    <EmbeddedResource Include="Driver\ScpVBus.cat" />
+    <EmbeddedResource Include="Driver\ScpVBus.inf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -102,9 +95,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DIFxAPI\DIFxAPI_x86.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Driver\ScpVBus.inf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
