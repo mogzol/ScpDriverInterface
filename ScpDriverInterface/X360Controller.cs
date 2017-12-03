@@ -131,7 +131,9 @@ namespace ScpDriverInterface
 	[Flags]
 	public enum X360Buttons
 	{
-		None = 0,
+        #pragma warning disable CS1591 // Disable "Missing XML comment for publicly visible type or member" for these buttons
+
+        None = 0,
 
 		Up = 1 << 0,
 		Down = 1 << 1,
@@ -153,5 +155,7 @@ namespace ScpDriverInterface
 		B = 1 << 13,
 		X = 1 << 14,
 		Y = 1 << 15,
-	}
+
+        #pragma warning restore CS1591
+    }
 }

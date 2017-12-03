@@ -83,6 +83,10 @@ namespace ScpDriverInterface
 			GC.SuppressFinalize(this);
 		}
 		
+        /// <summary>
+        /// Internal disposer, called by either the finalizer or the Dispose() method.
+        /// </summary>
+        /// <param name="disposing">True if called from Dispose(), false if called from finalizer.</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (_deviceHandle != null && !_deviceHandle.IsInvalid)
