@@ -68,6 +68,63 @@ namespace ScpDriverInstaller
 			return !rebootRequired;
 		}
 
+        /// <summary>Uninstall the ScpVBus driver.</summary>
+		/// <remarks>Throws exceptions upon errors.</remarks>
+		/// <returns>false if a reboot is still required to complete installation, else true to indicate completion.</returns>
+        public static bool Uninstall()
+        {
+            string infPath = @".\Driver\";
+            string devPath = "";
+            string instanceId = "";
+
+            uint result = 0;
+            bool rebootRequired = false;
+            var installer = Difx.Factory();
+
+            if (Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
+            {
+                if (!Devcon.Remove(new Guid(SCP_BUS_CLASS_GUID), devPath, instanceId))
+                {
+                    throw new ScpDriverInstallException("Unable to remove SCP Virtual Bus, cannot continue with uninstallation.");
+                }
+            }
+
+            result = installer.Uninstall(infPath + @"ScpVBus.inf", DifxFlags.DRIVER_PACKAGE_DELETE_FILES, out rebootRequired);
+            if (result == 0xe0000302)
+            {
+                throw new ScpDriverInstallException("Driver not found, please ensure it is installed.");
+            }
+            else if (result != 0)
+            {
+                throw new ScpDriverInstallException("Driver uninstall failed with DIFxAPI error 0x" + result.ToString("X8"));
+            }
+
+            return rebootRequired;
+        }
+
+        public static int doInstaller(bool uninstall = false, bool quiet = false)
+        {
+            try
+            {
+                var fullyCompleted = uninstall ? Uninstall() : Install();
+
+                if (!quiet)
+                {
+                    var msg = "Driver successfully " + (uninstall ? "un" : "") + "installed" + (fullyCompleted ? "!" : ", but a reboot may be required for it to work properly.");
+                    MessageBox.Show(msg, (uninstall ? "Uni" : "I") + "nstallation Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                
+                return fullyCompleted ? 0 : 1;
+            }
+            catch (Exception ex)
+            {
+                if (!quiet)
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return -1;
+            }
+        }
+
 		private void install_Click(object sender, EventArgs e)
 		{
 			Color oldColor = install.ForeColor;
@@ -76,18 +133,7 @@ namespace ScpDriverInstaller
 			install.Text = "Installing...";
 			Update();
 
-			try
-			{
-				var fullyCompleted = Install();
-				var msg = "Driver successfully installed" + (fullyCompleted ? "!" : ", but a reboot may be required for it to work properly.");
-				MessageBox.Show(msg, "Installation Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				install.Text = oldText;
-				install.ForeColor = oldColor;
-			}
+            doInstaller();
 
 			install.Text = oldText;
 			install.ForeColor = oldColor;
@@ -101,41 +147,7 @@ namespace ScpDriverInstaller
 			uninstall.Text = "Uninstalling...";
 			Update();
 
-			string infPath = @".\Driver\";
-			string devPath = "";
-			string instanceId = "";
-
-			uint result = 0;
-			bool rebootRequired = false;
-			var installer = Difx.Factory();
-
-			if (Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
-			{
-				if (!Devcon.Remove(new Guid(SCP_BUS_CLASS_GUID), devPath, instanceId))
-				{
-					MessageBox.Show("Unable to remove SCP Virtual Bus, cannot continue with uninstallation.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					uninstall.Text = oldText;
-					uninstall.ForeColor = oldColor;
-					return;
-				}
-			}
-
-			result = installer.Uninstall(infPath + @"ScpVBus.inf", DifxFlags.DRIVER_PACKAGE_DELETE_FILES, out rebootRequired);
-			if (result == 0)
-			{
-				if (rebootRequired)
-					MessageBox.Show("Driver successfully uninstalled, but a reboot may be required to complete uninstallation.", "Uninstall Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				else
-					MessageBox.Show("Driver successfully uninstalled!", "Uninstall Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-			else if (result == 0xe0000302)
-			{
-				MessageBox.Show("Driver not found, are you sure it's installed?", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-			else
-			{
-				MessageBox.Show("Driver uninstall failed with DIFxAPI error 0x" + result.ToString("X8"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+            doInstaller(true);
 
 			uninstall.Text = oldText;
 			uninstall.ForeColor = oldColor;
