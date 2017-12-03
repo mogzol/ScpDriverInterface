@@ -238,7 +238,7 @@ namespace ScpTester
 			this.btnXbox.Name = "btnXbox";
 			this.btnXbox.Size = new System.Drawing.Size(86, 23);
 			this.btnXbox.TabIndex = 10;
-			this.btnXbox.Text = "XBox Logo";
+			this.btnXbox.Text = "Xbox Logo";
 			this.btnXbox.UseVisualStyleBackColor = false;
 			this.btnXbox.Click += new System.EventHandler(this.btnXbox_Click);
 			// 

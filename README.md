@@ -1,6 +1,6 @@
 # ScpDriverInterface
 
-ScpDriverInterface uses Scarlet.Crush's SCP Virtual Bus Driver to emulate XBox 360 controllers. Credits and major props go to  [Scarlet.Crush](http://forums.pcsx2.net/User-Scarlet-Crush) for his awesome [SCP Server software](http://forums.pcsx2.net/Thread-XInput-Wrapper-for-DS3-and-Play-com-USB-Dual-DS2-Controller), without his work this wouldn't be possible.
+ScpDriverInterface uses Scarlet.Crush's SCP Virtual Bus Driver to emulate Xbox 360 controllers. Credits and major props go to  [Scarlet.Crush](http://forums.pcsx2.net/User-Scarlet-Crush) for his awesome [SCP Server software](http://forums.pcsx2.net/Thread-XInput-Wrapper-for-DS3-and-Play-com-USB-Dual-DS2-Controller), without his work this wouldn't be possible.
 
 ## Downloads
 
@@ -40,7 +40,7 @@ Unplugging controllers works much the same way. If you wanted to unplug controll
 
 ### Sending Inputs to the Virtual Controllers
 
-To send inputs to a controller, you use the `Report()` method. This method takes a 20-byte XBox 360 controller input report, as specified [here](http://free60.org/wiki/GamePad#Input_report). To make this easier, ScpDriverInterface includes the X360Controller class, which can generate the report for you. To use it, first create a new X360Controller object:
+To send inputs to a controller, you use the `Report()` method. This method takes a 20-byte Xbox 360 controller input report, as specified [here](http://free60.org/wiki/GamePad#Input_report). To make this easier, ScpDriverInterface includes the X360Controller class, which can generate the report for you. To use it, first create a new X360Controller object:
 
 ```C#
 X360Controller controller = new X360Controller();

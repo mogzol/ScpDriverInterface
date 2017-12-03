@@ -2,7 +2,7 @@
  * ScpDriverInterface - by Mogzol (and of course Scarlet.Crush) - Jan, 2016
  *
  * This is a simple little DLL which allows you to use Scarlet.Crush's SCP Virtual
- * Bus Driver to emulate XBox 360 Controllers.
+ * Bus Driver to emulate Xbox 360 controllers.
  * 
  * Most of the code here has been ripped out of his ScpControl source code, mostly
  * from the ScpDevice and BusDevice classes, so obviously credit and major props to
@@ -23,7 +23,7 @@ using Microsoft.Win32.SafeHandles;
 namespace ScpDriverInterface
 {
 	/// <summary>
-	/// Emulates XBox 360 controllers via Scarlet.Crush's SCP Virtual Bus Driver.
+	/// Emulates Xbox 360 controllers via Scarlet.Crush's SCP Virtual Bus Driver.
 	/// </summary>
 	public class ScpBus : IDisposable
 	{
@@ -92,7 +92,7 @@ namespace ScpDriverInterface
 		}
 
 		/// <summary>
-		/// Plugs in an emulated XBox 360 controller.
+		/// Plugs in an emulated Xbox 360 controller.
 		/// </summary>
 		/// <param name="controllerNumber">Used to identify the controller. Give each controller you plug in a different number. Number must be non-zero.</param>
 		/// <returns>True if the operation was successful, false otherwise.</returns>
@@ -118,7 +118,7 @@ namespace ScpDriverInterface
 		}
 
 		/// <summary>
-		/// Unplugs an emulated XBox 360 controller.
+		/// Unplugs an emulated Xbox 360 controller.
 		/// </summary>
 		/// <param name="controllerNumber">The controller you want to unplug.</param>
 		/// <returns>True if the operation was successful, false otherwise.</returns>
@@ -144,7 +144,7 @@ namespace ScpDriverInterface
 		}
 
 		/// <summary>
-		/// Unplugs all emulated XBox 360 controllers.
+		/// Unplugs all emulated Xbox 360 controllers.
 		/// </summary>
 		/// <returns>True if the operation was successful, false otherwise.</returns>
 		public bool UnplugAll()
@@ -164,7 +164,7 @@ namespace ScpDriverInterface
 		}
 
 		/// <summary>
-		/// Sends an input report for the current state of the specified emulated XBox 360 controller. Note: Only use this if you don't care about rumble data, otherwise use the 3-parameter version of Report().
+		/// Sends an input report for the current state of the specified emulated Xbox 360 controller. Note: Only use this if you don't care about rumble data, otherwise use the 3-parameter version of Report().
 		/// </summary>
 		/// <param name="controllerNumber">The controller to report.</param>
 		/// <param name="controllerReport">The controller report. If using the included X360Controller class, this can be generated with the GetReport() method. Otherwise see http://free60.org/wiki/GamePad#Input_report for details.</param>
@@ -175,7 +175,7 @@ namespace ScpDriverInterface
 		}
 
 		/// <summary>
-		/// Sends an input report for the current state of the specified emulated XBox 360 controller. If you care about rumble data, make sure you check the output report for rumble data every time you call this.
+		/// Sends an input report for the current state of the specified emulated Xbox 360 controller. If you care about rumble data, make sure you check the output report for rumble data every time you call this.
 		/// </summary>
 		/// <param name="controllerNumber">The controller to report.</param>
 		/// <param name="controllerReport">The controller report. If using the included X360Controller class, this can be generated with the GetReport() method. Otherwise see http://free60.org/wiki/GamePad#Input_report for details.</param>
