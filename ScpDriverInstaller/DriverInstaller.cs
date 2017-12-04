@@ -53,22 +53,11 @@ namespace ScpDriverInstaller
 		/// <returns>false if a reboot is still required to complete installation, else true to indicate completion.</returns>
 		public static bool Install()
 		{
-			var devPath = "";
-			var instanceId = "";
-			var installer = Difx.Factory();
-
-			uint result = 0;
-			bool rebootRequired = false;
-
-			var tempDir = GetTemporaryDirectory();
-			try
+			return UsingExtractedDriverAndInstaller((inf, installer) =>
 			{
-				ExtractDriverResources(tempDir);
-				var inf = Path.Combine(tempDir, "ScpVBus.inf");
-				if (!File.Exists(inf))
-				{
-					throw new ScpDriverInstallException("Could not find ScpVBus.inf after extracting temporary resources.");
-				}
+				var devPath = "";
+				var instanceId = "";
+				bool rebootRequired = false;
 
 				DifxFlags flags = DifxFlags.DRIVER_PACKAGE_ONLY_IF_DEVICE_PRESENT | DifxFlags.DRIVER_PACKAGE_FORCE;
 
@@ -80,18 +69,14 @@ namespace ScpDriverInstaller
 					}
 				}
 
-				result = installer.Install(inf, flags, out rebootRequired);
+				var result = installer.Install(inf, flags, out rebootRequired);
 				if (result != 0)
 				{
 					throw new ScpDriverInstallException("Driver installation failed with DIFxAPI error 0x" + result.ToString("X8"));
 				}
-			}
-			finally
-			{
-				Directory.Delete(tempDir, true);
-			}
 
-			return !rebootRequired;
+				return !rebootRequired;
+			});
 		}
 
 		/// <summary>Uninstall the ScpVBus driver.</summary>
@@ -99,18 +84,11 @@ namespace ScpDriverInstaller
 		/// <returns>false if a reboot is still required to complete uninstallation, else true to indicate completion.</returns>
 		public static bool Uninstall()
 		{
-			string devPath = "";
-			string instanceId = "";
-
-			uint result = 0;
-			bool rebootRequired = false;
-			var installer = Difx.Factory();
-
-			var tempDir = GetTemporaryDirectory();
-			try
+			return UsingExtractedDriverAndInstaller((inf, installer) =>
 			{
-				ExtractDriverResources(tempDir);
-				var inf = Path.Combine(tempDir, "ScpVBus.inf");
+				var devPath = "";
+				var instanceId = "";
+				bool rebootRequired = false;
 
 				if (Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
 				{
@@ -120,7 +98,7 @@ namespace ScpDriverInstaller
 					}
 				}
 
-				result = installer.Uninstall(inf, DifxFlags.DRIVER_PACKAGE_DELETE_FILES, out rebootRequired);
+				var result = installer.Uninstall(inf, DifxFlags.DRIVER_PACKAGE_DELETE_FILES, out rebootRequired);
 				if (result != 0)
 				{
 					if (result == 0xe0000302)
@@ -129,13 +107,29 @@ namespace ScpDriverInstaller
 					}
 					throw new ScpDriverUninstallException("Driver uninstall failed with DIFxAPI error 0x" + result.ToString("X8"));
 				}
+
+				return !rebootRequired;
+			});
+		}
+
+		private static bool UsingExtractedDriverAndInstaller(Func<string, Difx, bool> action)
+		{
+			var tempDir = GetTemporaryDirectory();
+			try
+			{
+				ExtractDriverResources(tempDir);
+				var inf = Path.Combine(tempDir, "ScpVBus.inf");
+				if (!File.Exists(inf))
+				{
+					throw new FileNotFoundException("Could not find ScpVBus.inf after extracting temporary resources.");
+				}
+
+				return action(inf, Difx.Factory());
 			}
 			finally
 			{
 				Directory.Delete(tempDir, true);
 			}
-
-			return !rebootRequired;
 		}
 
 		private void install_Click(object sender, EventArgs e)
