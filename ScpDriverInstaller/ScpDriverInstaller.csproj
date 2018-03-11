@@ -37,6 +37,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EmbeddedDIFx, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EmbeddedDIFx.1.0.0\lib\net40\EmbeddedDIFx.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,7 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Devcon.cs" />
-    <Compile Include="Difx.cs" />
     <Compile Include="DriverInstaller.cs" />
     <Compile Include="DriverInstaller.Designer.cs">
       <DependentUpon>DriverInstaller.cs</DependentUpon>
@@ -77,6 +79,7 @@
     <EmbeddedResource Include="Driver\x86\ScpVBus.sys" />
     <EmbeddedResource Include="Driver\ScpVBus.cat" />
     <EmbeddedResource Include="Driver\ScpVBus.inf" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -90,15 +93,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="DIFxAPI\DIFxAPI_x64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DIFxAPI\DIFxAPI_x86.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

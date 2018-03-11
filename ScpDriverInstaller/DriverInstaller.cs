@@ -14,8 +14,10 @@
  * error handling added by DavidRieman - Dec, 2017.
  */
 
+using EmbeddedDIFx;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -57,9 +59,8 @@ namespace ScpDriverInstaller
             {
                 var devPath = "";
                 var instanceId = "";
-                bool rebootRequired = false;
 
-                DifxFlags flags = DifxFlags.DRIVER_PACKAGE_ONLY_IF_DEVICE_PRESENT | DifxFlags.DRIVER_PACKAGE_FORCE;
+                var flags = DriverPackageFlags.ONLY_IF_DEVICE_PRESENT | DriverPackageFlags.FORCE;
 
                 if (!Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
                 {
@@ -69,13 +70,14 @@ namespace ScpDriverInstaller
                     }
                 }
 
-                var result = installer.Install(inf, flags, out rebootRequired);
-                if (result != 0)
+                try
                 {
-                    throw new ScpDriverInstallException("Driver installation failed with DIFxAPI error 0x" + result.ToString("X8"));
+                    return installer.DriverPackageInstall(inf, flags);
                 }
-
-                return !rebootRequired;
+                catch (Exception ex)
+                {
+                    throw new ScpDriverInstallException("Driver installation failed: " + ex.Message);
+                }
             });
         }
 
@@ -88,7 +90,6 @@ namespace ScpDriverInstaller
             {
                 var devPath = "";
                 var instanceId = "";
-                bool rebootRequired = false;
 
                 if (Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
                 {
@@ -98,17 +99,22 @@ namespace ScpDriverInstaller
                     }
                 }
 
-                var result = installer.Uninstall(inf, DifxFlags.DRIVER_PACKAGE_DELETE_FILES, out rebootRequired);
-                if (result == 0xe0000302)
+                try
                 {
-                    throw new ScpDriverUninstallException("Driver not found, are you sure it's installed?");
+                    return installer.DriverPackageUninstall(inf, DriverPackageFlags.DELETE_FILES);
                 }
-                else if (result != 0)
+                catch (Win32Exception ex)
                 {
-                    throw new ScpDriverUninstallException("Driver uninstall failed with DIFxAPI error 0x" + result.ToString("X8"));
+                    if ((uint)ex.ErrorCode == 0xe0000302)
+                    {
+                        throw new ScpDriverUninstallException("Driver not found, are you sure it's installed?");
+                    }
+                    throw new ScpDriverUninstallException("Driver uninstall failed: " + ex.Message);
                 }
-
-                return !rebootRequired;
+                catch (Exception ex)
+                {
+                    throw new ScpDriverUninstallException("Driver uninstall failed: " + ex.Message);
+                }
             });
         }
 
@@ -191,7 +197,7 @@ namespace ScpDriverInstaller
             }
         }
 
-        private static bool UsingExtractedDriverAndInstaller(Func<string, Difx, bool> action)
+        private static bool UsingExtractedDriverAndInstaller(Func<string, DIFx, bool> action)
         {
             var tempDir = GetTemporaryDirectory();
             try
@@ -203,7 +209,10 @@ namespace ScpDriverInstaller
                     throw new FileNotFoundException("Could not find ScpVBus.inf after extracting temporary resources.");
                 }
 
-                return action(inf, Difx.Factory());
+                using (var difx = new DIFx())
+                {
+                    return action(inf, difx);
+                }
             }
             finally
             {

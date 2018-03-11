@@ -230,7 +230,7 @@ namespace ScpDriverInterface
 
 					if (NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref DeviceInterfaceData, detailDataBuffer, bufferSize, ref bufferSize, ref da))
 					{
-						IntPtr pDevicePathName = detailDataBuffer + 4;
+						IntPtr pDevicePathName = (IntPtr)((Int64)detailDataBuffer + 4);
 
 						path = Marshal.PtrToStringAuto(pDevicePathName).ToUpper(CultureInfo.InvariantCulture);
 						Marshal.FreeHGlobal(detailDataBuffer);
