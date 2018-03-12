@@ -17,7 +17,6 @@
 using EmbeddedDIFx;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -103,13 +102,10 @@ namespace ScpDriverInstaller
                 {
                     return installer.DriverPackageUninstall(inf, DriverPackageFlags.DELETE_FILES);
                 }
-                catch (Win32Exception ex)
+                catch (DriverPackageException ex)
                 {
-                    if ((uint)ex.ErrorCode == 0xe0000302)
-                    {
-                        throw new ScpDriverUninstallException("Driver not found, are you sure it's installed?");
-                    }
-                    throw new ScpDriverUninstallException("Driver uninstall failed: " + ex.Message);
+                    var msg = ex.ErrorCode == 0xe0000302 ? "Driver not found. Are you sure it is installed?" : "Driver uninstall failed: " + ex.Message;
+                    throw new ScpDriverUninstallException(msg);
                 }
                 catch (Exception ex)
                 {
