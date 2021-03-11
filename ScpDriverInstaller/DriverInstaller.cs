@@ -9,97 +9,109 @@
  * 
  * You can download his original source code here:
  * http://forums.pcsx2.net/Thread-XInput-Wrapper-for-DS3-and-Play-com-USB-Dual-DS2-Controller
+ * 
+ * Silent install mode, installation through embedded resources, and improved
+ * error handling added by DavidRieman - Dec, 2017.
  */
 
+using EmbeddedDIFx;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace ScpDriverInstaller
 {
-	public class ScpDriverInstallException : Exception
-	{
-		public ScpDriverInstallException(string message) : base(message) { }
-	}
+    public class ScpDriverInstallException : Exception
+    {
+        public ScpDriverInstallException(string message) : base(message) { }
+    }
 
-	public partial class DriverInstaller : Form
-	{
-		private const string SCP_BUS_CLASS_GUID = "{F679F562-3164-42CE-A4DB-E7DDBE723909}";
+    public class ScpDriverUninstallException : Exception
+    {
+        public ScpDriverUninstallException(string message) : base(message) { }
+    }
 
-		public DriverInstaller()
-		{
-			InitializeComponent();
-		}
+    public partial class DriverInstaller : Form
+    {
+        private const string SCP_BUS_CLASS_GUID = "{F679F562-3164-42CE-A4DB-E7DDBE723909}";
 
-		private void credits_Click(object sender, EventArgs e)
-		{
-			Process.Start("http://forums.pcsx2.net/User-Scarlet-Crush");
-		}
+        public DriverInstaller()
+        {
+            InitializeComponent();
+        }
 
-		/// <summary>Install the ScpVBus driver.</summary>
-		/// <remarks>Throws exceptions upon errors.</remarks>
-		/// <returns>false if a reboot is still required to complete installation, else true to indicate completion.</returns>
-		public static bool Install()
-		{
-			var infPath = @".\Driver\";
-			var devPath = "";
-			var instanceId = "";
-			var installer = Difx.Factory();
+        private void credits_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://forums.pcsx2.net/User-Scarlet-Crush");
+        }
 
-			uint result = 0;
-			bool rebootRequired = false;
+        /// <summary>Install the ScpVBus driver.</summary>
+        /// <remarks>Throws ScpDriverInstallException upon known errors.</remarks>
+        /// <returns>false if a reboot is still required to complete installation, else true to indicate completion.</returns>
+        public static bool Install()
+        {
+            return UsingExtractedDriverAndInstaller((inf, installer) =>
+            {
+                var devPath = "";
+                var instanceId = "";
 
-			DifxFlags flags = DifxFlags.DRIVER_PACKAGE_ONLY_IF_DEVICE_PRESENT | DifxFlags.DRIVER_PACKAGE_FORCE;
+                var flags = DriverPackageFlags.ONLY_IF_DEVICE_PRESENT | DriverPackageFlags.FORCE;
 
-			if (!Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
-			{
-				if (!Devcon.Create("System", new Guid("{4D36E97D-E325-11CE-BFC1-08002BE10318}"), "root\\ScpVBus\0\0"))
-				{
-					throw new ScpDriverInstallException("Unable to create SCP Virtual Bus. Cannot continue with installation.");
-				}
-			}
+                if (!Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
+                {
+                    if (!Devcon.Create("System", new Guid("{4D36E97D-E325-11CE-BFC1-08002BE10318}"), "root\\ScpVBus\0\0"))
+                    {
+                        throw new ScpDriverInstallException("Unable to create SCP Virtual Bus. Cannot continue with installation.");
+                    }
+                }
 
-			result = installer.Install(infPath + @"ScpVBus.inf", flags, out rebootRequired);
-			if (result != 0)
-			{
-				throw new ScpDriverInstallException("Driver installation failed with DIFxAPI error 0x" + result.ToString("X8"));
-			}
-			return !rebootRequired;
-		}
+                try
+                {
+                    return installer.DriverPackageInstall(inf, flags);
+                }
+                catch (Exception ex)
+                {
+                    throw new ScpDriverInstallException("Driver installation failed: " + ex.Message);
+                }
+            });
+        }
 
         /// <summary>Uninstall the ScpVBus driver.</summary>
-		/// <remarks>Throws exceptions upon errors.</remarks>
-		/// <returns>false if a reboot is still required to complete installation, else true to indicate completion.</returns>
+        /// <remarks>Throws ScpDriverUninstallException upon known errors.</remarks>
+        /// <returns>false if a reboot is still required to complete uninstallation, else true to indicate completion.</returns>
         public static bool Uninstall()
         {
-            string infPath = @".\Driver\";
-            string devPath = "";
-            string instanceId = "";
-
-            uint result = 0;
-            bool rebootRequired = false;
-            var installer = Difx.Factory();
-
-            if (Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
+            return UsingExtractedDriverAndInstaller((inf, installer) =>
             {
-                if (!Devcon.Remove(new Guid(SCP_BUS_CLASS_GUID), devPath, instanceId))
+                var devPath = "";
+                var instanceId = "";
+
+                if (Devcon.Find(new Guid(SCP_BUS_CLASS_GUID), ref devPath, ref instanceId))
                 {
-                    throw new ScpDriverInstallException("Unable to remove SCP Virtual Bus, cannot continue with uninstallation.");
+                    if (!Devcon.Remove(new Guid(SCP_BUS_CLASS_GUID), devPath, instanceId))
+                    {
+                        throw new ScpDriverUninstallException("Unable to remove SCP Virtual Bus, cannot continue with uninstallation.");
+                    }
                 }
-            }
 
-            result = installer.Uninstall(infPath + @"ScpVBus.inf", DifxFlags.DRIVER_PACKAGE_DELETE_FILES, out rebootRequired);
-            if (result == 0xe0000302)
-            {
-                throw new ScpDriverInstallException("Driver not found, please ensure it is installed.");
-            }
-            else if (result != 0)
-            {
-                throw new ScpDriverInstallException("Driver uninstall failed with DIFxAPI error 0x" + result.ToString("X8"));
-            }
-
-            return rebootRequired;
+                try
+                {
+                    return installer.DriverPackageUninstall(inf, DriverPackageFlags.DELETE_FILES);
+                }
+                catch (DriverPackageException ex)
+                {
+                    var msg = ex.ErrorCode == 0xe0000302 ? "Driver not found. Are you sure it is installed?" : "Driver uninstall failed: " + ex.Message;
+                    throw new ScpDriverUninstallException(msg);
+                }
+                catch (Exception ex)
+                {
+                    throw new ScpDriverUninstallException("Driver uninstall failed: " + ex.Message);
+                }
+            });
         }
 
         public static int doInstaller(bool uninstall = false, bool quiet = false)
@@ -113,7 +125,7 @@ namespace ScpDriverInstaller
                     var msg = "Driver successfully " + (uninstall ? "un" : "") + "installed" + (fullyCompleted ? "!" : ", but a reboot may be required for it to work properly.");
                     MessageBox.Show(msg, (uninstall ? "Uni" : "I") + "nstallation Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                
+
                 return fullyCompleted ? 0 : 1;
             }
             catch (Exception ex)
@@ -125,32 +137,95 @@ namespace ScpDriverInstaller
             }
         }
 
-		private void install_Click(object sender, EventArgs e)
-		{
-			Color oldColor = install.ForeColor;
-			string oldText = install.Text;
-			install.ForeColor = Color.LightGray;
-			install.Text = "Installing...";
-			Update();
+        private void install_Click(object sender, EventArgs e)
+        {
+            Color oldColor = install.ForeColor;
+            string oldText = install.Text;
+            install.ForeColor = Color.LightGray;
+            install.Text = "Installing...";
+            Update();
 
             doInstaller();
 
-			install.Text = oldText;
-			install.ForeColor = oldColor;
-		}
+            install.Text = oldText;
+            install.ForeColor = oldColor;
+        }
 
-		private void uninstall_Click(object sender, EventArgs e)
-		{
-			Color oldColor = uninstall.ForeColor;
-			string oldText = uninstall.Text;
-			uninstall.ForeColor = Color.LightGray;
-			uninstall.Text = "Uninstalling...";
-			Update();
+        private void uninstall_Click(object sender, EventArgs e)
+        {
+            Color oldColor = uninstall.ForeColor;
+            string oldText = uninstall.Text;
+            uninstall.ForeColor = Color.LightGray;
+            uninstall.Text = "Uninstalling...";
+            Update();
 
             doInstaller(true);
 
-			uninstall.Text = oldText;
-			uninstall.ForeColor = oldColor;
-		}
-	}
+            uninstall.Text = oldText;
+            uninstall.ForeColor = oldColor;
+        }
+
+        private static string GetTemporaryDirectory()
+        {
+            string tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(tempDir);
+            return tempDir;
+        }
+
+        private static void ExtractDriverResources(string tempDir)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resources = assembly.GetManifestResourceNames();
+            var baseResourcePath = "ScpDriverInstaller.Driver.";
+            var resourceFiles = new List<string>() { "ScpVBus.inf", "ScpVBus.cat", "amd64\\ScpVBus.sys", "x86\\ScpVBus.sys" };
+            foreach (var resourceFile in resourceFiles)
+            {
+                var pathParts = resourceFile.Split('\\');
+                var resourceTempDir = pathParts.Length > 1 ? Path.Combine(tempDir, pathParts[0]) : tempDir;
+                var resourceFullPath = Path.Combine(tempDir, resourceFile);
+                var embeddedResourcePath = baseResourcePath + string.Join(".", pathParts);
+                if (!Directory.Exists(resourceTempDir))
+                {
+                    Directory.CreateDirectory(resourceTempDir);
+                }
+
+                ExtractResourceToFile(assembly, embeddedResourcePath, resourceFullPath);
+            }
+        }
+
+        private static bool UsingExtractedDriverAndInstaller(Func<string, DIFx, bool> action)
+        {
+            var tempDir = GetTemporaryDirectory();
+            try
+            {
+                ExtractDriverResources(tempDir);
+                var inf = Path.Combine(tempDir, "ScpVBus.inf");
+                if (!File.Exists(inf))
+                {
+                    throw new FileNotFoundException("Could not find ScpVBus.inf after extracting temporary resources.");
+                }
+
+                using (var difx = new DIFx())
+                {
+                    return action(inf, difx);
+                }
+            }
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        private static void ExtractResourceToFile(Assembly assembly, string embeddedResourcePath, string outputFilePath)
+        {
+            using (var resourceStream = assembly.GetManifestResourceStream(embeddedResourcePath))
+            using (var fileStream = new FileStream(outputFilePath, FileMode.Create))
+            {
+                for (int i = 0; i < resourceStream.Length; i++)
+                {
+                    fileStream.WriteByte((byte)resourceStream.ReadByte());
+                }
+            }
+        }
+    }
 }

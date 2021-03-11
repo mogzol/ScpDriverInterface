@@ -1,23 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace ScpDriverInstaller
 {
-	static class Program
-	{
+    static class Program
+    {
         private static bool _quiet = false;
         private static bool _install = false;
         private static bool _uninstall = false;
 
-		/// <summary>The main entry point for the application.</summary>
-		[STAThread]
-		static int Main(string[] args)
-		{
+        /// <summary>The main entry point for the application.</summary>
+        [STAThread]
+        static int Main(string[] args)
+        {
             ParseArgs(args);
-			if (_install || _uninstall || _quiet)
-				return DriverInstaller.doInstaller(_uninstall, _quiet);
+            if (_install || _uninstall || _quiet)
+                return DriverInstaller.doInstaller(_uninstall, _quiet);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -25,7 +24,7 @@ namespace ScpDriverInstaller
             return 0;
         }
 
-		private static void ParseArgs(string[] args)
+        private static void ParseArgs(string[] args)
         {
             String[] quietArgs = { "/q", "-q", "/quiet", "--quiet", "/s", "-s", "/silent", "--silent" };
             String[] installArgs = { "/i", "-i", "/install", "--install" };
@@ -36,6 +35,6 @@ namespace ScpDriverInstaller
             _quiet = lowerArgs.Intersect(quietArgs).Any();
             _install = lowerArgs.Intersect(installArgs).Any();
             _uninstall = lowerArgs.Intersect(uninstallArgs).Any();
-		}
-	}
+        }
+    }
 }
